@@ -1,0 +1,446 @@
+// @synapxlab/multiselect — styles
+// Préfixe sxms-. Aucun !important : tout est surchargeable par les custom properties.
+
+// Le select natif reste dans le DOM (il porte la valeur du formulaire) mais ne s'affiche pas.
+.sxms-native {
+  display: none;
+}
+
+.sxms-field,
+.sxms-popup {
+  --sxms-bg: #f9f9f9;
+  --sxms-border: #dadada;
+  --sxms-border-hover: #7c8592;
+  --sxms-text: #212e44;
+  --sxms-muted: #7c8592;
+  --sxms-chip-bg: #f1f3f6;
+  --sxms-chip-text: #7c8592;
+  --sxms-primary: #e94c1e;
+  --sxms-primary-text: #ffffff;
+  --sxms-popup-bg: #ffffff;
+  --sxms-item-bg: #fafafb;
+  --sxms-item-hover: #f1f3f6;
+  --sxms-item-hover-border: #bcbeca;
+  --sxms-radius: 4px;
+  --sxms-shadow: 1px 1px 12px rgba(0, 0, 0, 0.15);
+  --sxms-font: 14px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sxms-transition: all 0.3s ease;
+  --sxms-focus: #0d6efd;
+
+  box-sizing: border-box;
+  font: var(--sxms-font);
+  color: var(--sxms-text);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+// Thème sombre : préférence système, puis attributs Bootstrap 5 / génériques.
+@mixin dark-tokens {
+  --sxms-bg: #2b3035;
+  --sxms-border: #495057;
+  --sxms-border-hover: #868e96;
+  --sxms-text: #dee2e6;
+  --sxms-muted: #adb5bd;
+  --sxms-chip-bg: #3a4047;
+  --sxms-chip-text: #ced4da;
+  --sxms-popup-bg: #2b3035;
+  --sxms-item-bg: #343a40;
+  --sxms-item-hover: #3d444b;
+  --sxms-item-hover-border: #5c636a;
+  --sxms-shadow: 1px 1px 12px rgba(0, 0, 0, 0.5);
+  --sxms-focus: #6ea8fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bs-theme='light']):not([data-theme='light']) {
+    .sxms-field,
+    .sxms-popup {
+      @include dark-tokens;
+    }
+  }
+}
+
+[data-bs-theme='dark'] .sxms-field,
+[data-bs-theme='dark'] .sxms-popup,
+[data-theme='dark'] .sxms-field,
+[data-theme='dark'] .sxms-popup,
+.sxms-field[data-bs-theme='dark'],
+.sxms-popup[data-bs-theme='dark'] {
+  @include dark-tokens;
+}
+
+// ---------------------------------------------------------------- Icônes
+
+.sxms-icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+// ---------------------------------------------------------------- Champ
+
+// Les chips s'empilent dans leur conteneur ; le chevron reste à droite, centré verticalement.
+.sxms-field {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 4px 0.5em;
+  background: var(--sxms-bg);
+  border: 1px solid var(--sxms-border);
+  border-radius: var(--sxms-radius);
+  cursor: pointer;
+  transition: var(--sxms-transition);
+
+  &:hover,
+  &--open {
+    background: var(--sxms-bg);
+    border-color: var(--sxms-border-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sxms-focus);
+    outline-offset: 1px;
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.sxms-chips {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.sxms-placeholder {
+  color: var(--sxms-muted);
+  font-weight: 500;
+  font-style: italic;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sxms-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 30px;
+  max-width: 100%;
+  padding: 4px 0.5em;
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-chip-bg);
+  color: var(--sxms-chip-text);
+  font-weight: 600;
+  cursor: default;
+}
+
+// Le libellé s'affiche entier (la référence ne tronque pas) ; il se replie si la chip est trop étroite.
+.sxms-chip-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sxms-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--sxms-transition);
+
+  &:hover {
+    background: var(--sxms-popup-bg);
+    color: var(--sxms-text);
+  }
+}
+
+.sxms-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-left: auto;
+  height: 20px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-chip-bg);
+  color: var(--sxms-muted);
+  font-size: 14px;
+  transition: var(--sxms-transition);
+
+  .sxms-field--open & .sxms-icon {
+    transform: rotate(180deg);
+  }
+}
+
+// ---------------------------------------------------------------- Popover
+
+.sxms-popup {
+  // position / top / left / width / z-index / max-height sont posés en inline par le script.
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--sxms-popup-bg);
+  border-radius: var(--sxms-radius);
+  box-shadow: var(--sxms-shadow);
+  overflow: hidden;
+}
+
+.sxms-mobile-header,
+.sxms-mobile-footer {
+  display: none;
+}
+
+.sxms-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+  padding: 10px;
+}
+
+.sxms-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--sxms-muted);
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-item-bg);
+  color: var(--sxms-muted);
+  font-size: 18px;
+
+  &:focus-within {
+    border-color: var(--sxms-text);
+  }
+}
+
+.sxms-search {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--sxms-text);
+  font: var(--sxms-font);
+  outline: none;
+
+  &::placeholder {
+    color: var(--sxms-muted);
+    opacity: 0.8;
+  }
+
+  &::-webkit-search-cancel-button {
+    cursor: pointer;
+  }
+}
+
+.sxms-sort {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  padding: 4px;
+  margin: 0;
+  border: none;
+  border-radius: var(--sxms-radius);
+  background: transparent;
+  color: var(--sxms-muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--sxms-transition);
+
+  &:hover {
+    color: var(--sxms-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sxms-focus);
+  }
+
+  &--on {
+    color: var(--sxms-primary);
+  }
+}
+
+.sxms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: var(--sxms-list-max-height, 300px);
+  overflow: auto;
+  padding: 10px;
+  outline: none;
+
+  .sxms-searchbar + & {
+    padding-top: 0;
+  }
+}
+
+// Une ligne : la case est invisible et le libellé décalé de -2rem ; à la sélection
+// la bordure et le texte prennent la couleur primaire, la case apparaît en fondu et
+// le libellé glisse à sa place. Tout en transition .3s (spec §2.2).
+.sxms-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: var(--sxms-item-bg);
+  border: 2px solid transparent;
+  border-radius: var(--sxms-radius);
+  color: var(--sxms-text);
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--sxms-transition);
+
+  &:hover,
+  &:focus,
+  &--active {
+    background: var(--sxms-item-hover);
+  }
+
+  &:hover:not(.sxms-item--selected),
+  &--active:not(.sxms-item--selected) {
+    border-color: var(--sxms-item-hover-border);
+  }
+
+  &--selected {
+    border-color: var(--sxms-primary);
+    color: var(--sxms-primary);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.sxms-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--sxms-text);
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-primary);
+  color: var(--sxms-primary-text);
+  font-size: 14px;
+  opacity: 0;
+  transition: var(--sxms-transition);
+
+  .sxms-item--selected & {
+    opacity: 1;
+    border-color: var(--sxms-primary);
+  }
+}
+
+.sxms-item--option .sxms-label {
+  translate: -2rem;
+  transition: var(--sxms-transition);
+}
+
+.sxms-item--option.sxms-item--selected .sxms-label {
+  translate: 0;
+}
+
+.sxms-noresults {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  padding: 0.5rem;
+  color: var(--sxms-muted);
+}
+
+// ---------------------------------------------------------------- Mobile : feuille plein écran
+
+.sxms-popup--mobile {
+  inset: 0;
+  width: auto;
+  max-height: none;
+  border-radius: 0;
+
+  .sxms-mobile-header,
+  .sxms-mobile-footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .sxms-mobile-header {
+    justify-content: flex-end;
+    border-bottom: 1px solid var(--sxms-border);
+  }
+
+  .sxms-mobile-footer {
+    justify-content: stretch;
+    border-top: 1px solid var(--sxms-border);
+  }
+
+  .sxms-list {
+    max-height: none;
+  }
+}
+
+.sxms-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-chip-bg);
+  color: var(--sxms-text);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.sxms-validate {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: var(--sxms-radius);
+  background: var(--sxms-primary);
+  color: var(--sxms-primary-text);
+  font: var(--sxms-font);
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@synapxlab/multiselect — démo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { color-scheme: light; --bg: #f5f6fa; --fg: #1a1d23; --card: #fff; --muted: #6b7280; --line: #d9dce3; }
+    [data-bs-theme="dark"] { color-scheme: dark; --bg: #1b1f24; --fg: #e5e7eb; --card: #262b33; --muted: #9ca3af; --line: #3b4250; }
+    body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--fg); padding: 24px; min-height: 140vh; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    p.subtitle { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+    .card h2 { font-size: 15px; margin: 0 0 8px; }
+    .card p { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+    label.lbl { display: block; font-weight: 600; margin-bottom: 6px; }
+    .log { font: 12px/1.4 ui-monospace, monospace; background: rgba(127,127,127,.1); padding: 6px 8px; border-radius: 4px; max-height: 120px; overflow: auto; white-space: pre-wrap; margin-top: 10px; }
+    .clip { height: 90px; overflow: hidden; border: 1px dashed var(--line); padding: 8px; position: relative; }
+    .fake-modal { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; z-index: 1055; }
+    .fake-modal.open { display: flex; }
+    .fake-modal .dialog { background: var(--card); border-radius: 8px; padding: 20px; width: 420px; max-width: 95vw; transform: translate(0, 0) scale(1); overflow: hidden; contain: paint; }
+    button.plain { font: inherit; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .corner { position: fixed; right: 8px; bottom: 8px; width: 280px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px; z-index: 5; }
+  </style>
+</head>
+<body>
+  <h1>@synapxlab/multiselect</h1>
+  <p class="subtitle">Amélioration progressive d'un &lt;select&gt; natif — chips, recherche, popover jamais hors écran.
+    <button class="plain" id="theme-toggle" type="button">Basculer data-bs-theme="dark"</button>
+    <button class="plain" id="open-modal" type="button">Ouvrir la fausse modale (fixed + transform + contain)</button>
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1. Multiple — 15 options de la référence</h2>
+      <p>Recherche, « Tout sélectionner », tri sélectionnés d'abord. Le label ouvre le composant.</p>
+      <label class="lbl" for="attentes">Quelles sont vos attentes de l'événement ?</label>
+      <select id="attentes" name="attentes[]" multiple data-multiselect>
+        <option value="aides">Aides, Subventions, Business plan, Financement</option>
+        <option value="communication">Communication, Networking, Prospection, Réseau</option>
+        <option value="developpement">Développement, Croissance, International</option>
+        <option value="ess">Economie Sociale et Solidaire, Impact positif</option>
+        <option value="feminin">Entrepreneuriat féminin</option>
+        <option value="franchise">Franchise</option>
+        <option value="freelance">Freelance et indépendant</option>
+        <option value="idee">Idée, Accompagnement, Etude de marché, Conseil</option>
+        <option value="jeune">Jeune</option>
+        <option value="pilotage">Pilotage, Trésorerie, RH, Management</option>
+        <option value="reprise">Reprise d'entreprise</option>
+        <option value="startup">Startup</option>
+        <option value="statut">Statut, Formalités, Implantation, Protection sociale</option>
+        <option value="web">Site internet, Réseaux sociaux, Référencement, E-commerce</option>
+        <option value="tech">Tech, IA, Innovation</option>
+      </select>
+      <div class="row" style="margin-top:10px">
+        <button class="plain" data-api="open" type="button">open()</button>
+        <button class="plain" data-api="close" type="button">close()</button>
+        <button class="plain" data-api="disable" type="button">disable()</button>
+        <button class="plain" data-api="enable" type="button">enable()</button>
+        <button class="plain" id="api-set" type="button">setValue(['jeune','startup'])</button>
+        <button class="plain" id="api-clear" type="button">setValue([])</button>
+        <button class="plain" data-api="destroy" type="button">destroy()</button>
+      </div>
+      <div class="log" id="log-main"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Simple (select sans multiple)</h2>
+      <p>Même habillage, une valeur, fermeture au choix, pas de « Tout sélectionner ».</p>
+      <label class="lbl" for="pays">Pays</label>
+      <select id="pays" name="pays">
+        <option value="">— Choisir —</option>
+        <option value="fr" selected>France</option>
+        <option value="be">Belgique</option>
+        <option value="ch">Suisse</option>
+        <option value="lu">Luxembourg</option>
+        <option value="ca">Canada</option>
+      </select>
+      <div class="log" id="log-single"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. Préselection + maxItems 3, sans recherche</h2>
+      <p><code>searchable:false, maxItems:3</code> — les lignes se bloquent au-delà.</p>
+      <select id="presel" name="presel[]" multiple>
+        <option value="a" selected>Alpha</option>
+        <option value="b">Bêta</option>
+        <option value="c" selected>Gamma</option>
+        <option value="d">Delta</option>
+        <option value="e" disabled>Epsilon (désactivée)</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <h2>4. Désactivé</h2>
+      <p>Select <code>disabled</code> à la création.</p>
+      <select id="off" name="off[]" multiple disabled>
+        <option value="a" selected>Alpha</option>
+        <option value="b">Bêta</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <h2>5. Dans une boîte overflow:hidden</h2>
+      <p>Le popover vit dans body : il n'est pas coupé.</p>
+      <div class="clip">
+        <select id="clip" name="clip[]" multiple>
+          <option value="a">Alpha</option>
+          <option value="b">Bêta</option>
+          <option value="c">Gamma</option>
+          <option value="d">Delta</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>6. width:'anchor', locale en</h2>
+      <p>Largeur du popover = largeur du champ.</p>
+      <select id="anchor" name="anchor[]" multiple>
+        <option value="a">Alpha</option>
+        <option value="b">Bêta</option>
+        <option value="c">Gamma</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="corner">
+    <strong>7. Coin bas-droit</strong>
+    <select id="corner" name="corner[]" multiple>
+      <option value="a">Alpha</option>
+      <option value="b">Bêta</option>
+      <option value="c">Gamma</option>
+      <option value="d">Delta</option>
+      <option value="e">Epsilon</option>
+      <option value="f">Zêta</option>
+    </select>
+  </div>
+
+  <div class="fake-modal" id="fake-modal">
+    <div class="dialog">
+      <h2 style="margin-top:0">8. Fausse modale (z-index 1055)</h2>
+      <p>Parent <code>position:fixed; transform; contain:paint; overflow:hidden</code>.</p>
+      <select id="modal" name="modal[]" multiple>
+        <option value="a">Alpha</option>
+        <option value="b">Bêta</option>
+        <option value="c">Gamma</option>
+      </select>
+      <p><button class="plain" id="close-modal" type="button">Fermer</button></p>
+    </div>
+  </div>
+
+  <script type="module" src="/src/demo.ts"></script>
+</body>
+</html>
