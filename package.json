@@ -20,10 +20,7 @@
     "README.fr.md",
     "LICENSE"
   ],
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ],
+  "sideEffects": true,
   "scripts": {
     "dev": "vite",
     "build:lib": "vite build --config vite.lib.config.ts && npm run minify:es && tsc -p tsconfig.build.json",
