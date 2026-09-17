@@ -203,6 +203,16 @@ La palette sombre s'applique sous `@media (prefers-color-scheme: dark)`, et sous
 
 Préfixe de classes `sxms-`.
 
+### Select natif, même habillage
+
+Pour un `<select>` qui n'a pas besoin du composant, la classe `sxms-select` lui donne le même champ, le même chevron et les mêmes tokens, sans JavaScript. Pratique pour garder un formulaire homogène.
+
+```html
+<select name="pays" class="sxms-select">
+  <option value="fr">France</option>
+</select>
+```
+
 ---
 
 ## Accessibilité

@@ -203,6 +203,16 @@ The dark palette applies under `@media (prefers-color-scheme: dark)`, and under 
 
 Class prefix is `sxms-`.
 
+### Plain native select, same look
+
+For a `<select>` that does not need the component, the class `sxms-select` gives it the same field, chevron and tokens, with no JavaScript. Handy to keep a form visually consistent.
+
+```html
+<select name="country" class="sxms-select">
+  <option value="fr">France</option>
+</select>
+```
+
 ---
 
 ## Accessibility

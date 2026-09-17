@@ -7,7 +7,8 @@
 }
 
 .sxms-field,
-.sxms-popup {
+.sxms-popup,
+.sxms-select {
   --sxms-bg: #f9f9f9;
   --sxms-border: #dadada;
   --sxms-border-hover: #7c8592;
@@ -26,6 +27,9 @@
   --sxms-font: 14px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
   --sxms-transition: all 0.3s ease;
   --sxms-focus: #0d6efd;
+  // Chevron du select natif habillé (.sxms-select) : un SVG en data URI ne peut pas
+  // lire currentColor, la couleur est donc cuite ici, en clair et en sombre.
+  --sxms-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c8592' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 
   box-sizing: border-box;
   font: var(--sxms-font);
@@ -53,12 +57,14 @@
   --sxms-item-hover-border: #5c636a;
   --sxms-shadow: 1px 1px 12px rgba(0, 0, 0, 0.5);
   --sxms-focus: #6ea8fe;
+  --sxms-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23adb5bd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-bs-theme='light']):not([data-theme='light']) {
     .sxms-field,
-    .sxms-popup {
+    .sxms-popup,
+    .sxms-select {
       @include dark-tokens;
     }
   }
@@ -66,11 +72,53 @@
 
 [data-bs-theme='dark'] .sxms-field,
 [data-bs-theme='dark'] .sxms-popup,
+[data-bs-theme='dark'] .sxms-select,
 [data-theme='dark'] .sxms-field,
 [data-theme='dark'] .sxms-popup,
+[data-theme='dark'] .sxms-select,
 .sxms-field[data-bs-theme='dark'],
-.sxms-popup[data-bs-theme='dark'] {
+.sxms-popup[data-bs-theme='dark'],
+.sxms-select[data-bs-theme='dark'] {
   @include dark-tokens;
+}
+
+// ---------------------------------------------------------------- Select natif habillé
+
+// Pour un <select> ordinaire, sans JS : même champ, même chevron, mêmes tokens.
+// Utile pour garder un formulaire homogène là où le composant n'apporte rien.
+.sxms-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 4px 2.25em 4px 0.75em;
+  color: var(--sxms-text);
+  background: var(--sxms-select-arrow) no-repeat right 0.5em center / 16px 16px var(--sxms-bg);
+  border: 1px solid var(--sxms-border);
+  border-radius: var(--sxms-radius);
+  cursor: pointer;
+  transition: var(--sxms-transition);
+
+  &:hover {
+    border-color: var(--sxms-border-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sxms-focus);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // Un select multiple natif : pas de chevron, la liste est déroulée dans le champ.
+  &[multiple] {
+    background-image: none;
+    padding-right: 0.75em;
+    min-height: auto;
+  }
 }
 
 // ---------------------------------------------------------------- Icônes
